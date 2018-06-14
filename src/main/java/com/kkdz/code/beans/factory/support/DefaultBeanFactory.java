@@ -18,9 +18,13 @@ public class DefaultBeanFactory implements BeanFactory {
 
 	private static final String CLASS_NAME = "class";
 	private static final String CLASS_ID = "id";
-	private Map<String, Object> beansMap = new HashMap<>();
+	private Map<String, BeanDefinition> definitionBeanMap = new HashMap<>();
 
 	public DefaultBeanFactory(String configFile) {
+		loadBeanDefinition(configFile);
+	}
+
+	private void loadBeanDefinition(String configFile) {
 		URL url = ClassLoader.getSystemClassLoader().getResource(configFile);
 		File file = new File(url.getPath());
 		try {
@@ -31,34 +35,51 @@ public class DefaultBeanFactory implements BeanFactory {
 			Iterator<Element> iterator = root.elementIterator();
 			while (iterator.hasNext()) {
 				Element e = (Element) iterator.next();
-				String clsId = e.attributeValue(CLASS_ID);
-				String clsName = e.attributeValue(CLASS_NAME);
-				Object bean = loadBean(clsName);
-				beansMap.put(clsId, bean);
+				String beanId = e.attributeValue(CLASS_ID);
+				String beanClassName = e.attributeValue(CLASS_NAME);
+				BeanDefinition bean = new GenericBeanDefinition(beanId, beanClassName);
+				definitionBeanMap.put(beanId, bean);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private Object loadBean(String clsName) {
+	// private BeanDefinition loadBean(String clsName) {
+	// try {
+	// Class<?> bean = ClassLoader.getSystemClassLoader().loadClass(clsName);
+	// return (BeanDefinition) bean.newInstance();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
+
+	/**
+	 * getBeanDefinition是get bean的定义
+	 */
+	@Override
+	public BeanDefinition getBeanDefinition(String beanId) {
+		return definitionBeanMap.get(beanId);
+	}
+
+	/**
+	 * getBean是get实例
+	 */
+	@Override
+	public Object getBean(String beanId) {
+
+		BeanDefinition beanDefinition = this.definitionBeanMap.get(beanId);
+		if (beanDefinition == null) {
+			return null;
+		}
 		try {
-			Class<?> bean = ClassLoader.getSystemClassLoader().loadClass(clsName);
+			Class<?> bean = ClassLoader.getSystemClassLoader().loadClass(beanDefinition.getBeanClassName());
 			return bean.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@Override
-	public BeanDefinition getBeanDefinition(String beanId) {
-		return new GenericBeanDefinition(beanId, beansMap.get(beanId).getClass().getName());
-	}
-
-	@Override
-	public Object getBean(String beanId) {
-		return beansMap.get(beanId);
 	}
 
 }
