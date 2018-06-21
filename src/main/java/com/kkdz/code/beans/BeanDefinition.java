@@ -20,6 +20,6 @@ public interface BeanDefinition {
 
 	public String getScope();
 
-	public String setScope(String scope);
+	public void setScope(String scope);
 
 }

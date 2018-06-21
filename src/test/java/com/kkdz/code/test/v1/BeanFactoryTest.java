@@ -39,16 +39,25 @@ public class BeanFactoryTest {
 		assertTrue(bd.isSingleton());
 
 		assertFalse(bd.isPrototype());
+		
+//		assertFalse(bd.isSingleton());
+		
+//		assertTrue(bd.isPrototype());
 
-		assertEquals(BeanDefinition.SCOPE_DEFAULT, bd.getScope());
+//		assertEquals(BeanDefinition.SCOPE_DEFAULT, bd.getScope());
+		assertEquals(BeanDefinition.SCOPE_SINGLETON, bd.getScope());
+//		assertEquals(BeanDefinition.SCOPE_PROTOTYPE, bd.getScope());
 
 		String beanClassName = bd.getBeanClassName();
 
 		assertEquals("com.kkdz.code.service.v1.PetStoreService", beanClassName);
 
 		PetStoreService petStore = (PetStoreService) factory.getBean("petStore");
+		PetStoreService petStore1 = (PetStoreService) factory.getBean("petStore");
 
 		assertNotNull(petStore);
+		
+		assertEquals(petStore, petStore1);
 	}
 
 	@Test

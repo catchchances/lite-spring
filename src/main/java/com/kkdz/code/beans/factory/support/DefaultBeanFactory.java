@@ -7,7 +7,8 @@ import com.kkdz.code.beans.BeanDefinition;
 import com.kkdz.code.beans.factory.BeanCreationException;
 import com.kkdz.code.beans.factory.config.ConfigurableBeanFactory;
 
-public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefinitionRegister {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegister
+		implements ConfigurableBeanFactory, BeanDefinitionRegister {
 
 	private ClassLoader beanClassLoader;
 
@@ -22,15 +23,30 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefiniti
 	@Override
 	public Object getBean(String beanId) {
 
-		BeanDefinition beanDefinition = this.definitionBeanMap.get(beanId);
-		if (beanDefinition == null) {
+		BeanDefinition bd = this.definitionBeanMap.get(beanId);
+		if (bd == null) {
 			return null;
 		}
+		if (bd.isSingleton()) {
+			Object bean = this.getSingleton(beanId);
+			if (bean == null) {
+				bean = create(bd);
+				registerSingleton(beanId, bean);
+			}
+			return bean;
+		}
+		return create(bd);
+
+	}
+
+	private Object create(BeanDefinition bd) {
+		ClassLoader cl = this.getClassLoader();
+		String beanClassName = bd.getBeanClassName();
 		try {
-			Class<?> bean = getClassLoader().loadClass(beanDefinition.getBeanClassName());
-			return bean.newInstance();
+			Class<?> clz = cl.loadClass(beanClassName);
+			return clz.newInstance();
 		} catch (Exception e) {
-			throw new BeanCreationException(beanId, "", e);
+			throw new BeanCreationException("create bean for '" + beanClassName + "' failed", e);
 		}
 	}
 
