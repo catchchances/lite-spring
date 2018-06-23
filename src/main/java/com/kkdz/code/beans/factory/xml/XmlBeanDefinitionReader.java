@@ -4,21 +4,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.kkdz.code.beans.BeanDefinition;
+import com.kkdz.code.beans.PropertyValue;
+import com.kkdz.code.beans.RuntimeBeanReference;
+import com.kkdz.code.beans.TypedStringValue;
 import com.kkdz.code.beans.factory.BeanDefinitionStoreException;
 import com.kkdz.code.beans.factory.support.BeanDefinitionRegister;
 import com.kkdz.code.beans.factory.support.GenericBeanDefinition;
 import com.kkdz.code.core.Resource;
+import com.kkdz.code.utils.StringUtils;
 
 public class XmlBeanDefinitionReader {
+
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	private static final String CLASS_NAME = "class";
 	private static final String CLASS_ID = "id";
 	private static final String SCOPE_ATTRIBUTE = "scope";
+	private static final String PROPERTY_ELEMENT = "property";
+	private static final String REF_ATTRIBUTE = "ref";
+	private static final String VALUE_ATTRIBUTE = "value";
+	private static final String NAME_ATTRIBUTE = "name";
 
 	BeanDefinitionRegister register;
 
@@ -36,14 +48,15 @@ public class XmlBeanDefinitionReader {
 			@SuppressWarnings("unchecked")
 			Iterator<Element> iterator = root.elementIterator();
 			while (iterator.hasNext()) {
-				Element e = (Element) iterator.next();
-				String beanId = e.attributeValue(CLASS_ID);
-				String beanClassName = e.attributeValue(CLASS_NAME);
+				Element ele = (Element) iterator.next();
+				String beanId = ele.attributeValue(CLASS_ID);
+				String beanClassName = ele.attributeValue(CLASS_NAME);
 				BeanDefinition bd = new GenericBeanDefinition(beanId, beanClassName);
-				String scope = e.attributeValue(SCOPE_ATTRIBUTE);
+				String scope = ele.attributeValue(SCOPE_ATTRIBUTE);
 				if (scope != null) {
 					bd.setScope(scope);
 				}
+				parsePropertyElement(ele, bd);
 				register.registerBeanDefinition(beanId, bd);
 			}
 		} catch (Exception e) {
@@ -57,6 +70,45 @@ public class XmlBeanDefinitionReader {
 				}
 			}
 		}
+	}
+
+	private void parsePropertyElement(Element beanElem, BeanDefinition bd) {
+		@SuppressWarnings("unchecked")
+		Iterator<Element> iter = beanElem.elementIterator(PROPERTY_ELEMENT);
+		while (iter.hasNext()) {
+			Element propElem = iter.next();
+			String propertyName = propElem.attributeValue(NAME_ATTRIBUTE);
+			if (!StringUtils.hasLength(propertyName)) {
+				logger.fatal("Tag 'property' must have a 'name' attribute");
+				return;
+			}
+			Object val = parsePropertyValue(propElem, bd, propertyName);
+			PropertyValue pv = new PropertyValue(propertyName, val);
+			bd.getPropertyValues().add(pv);
+		}
+	}
+
+	private Object parsePropertyValue(Element ele, BeanDefinition bd, String propertyName) {
+		String elementName = propertyName != null ? "<property> element for property '" + propertyName + "'"
+				: "<constructor-arg> element";
+
+		boolean hasRefAttribute = ele.attribute(REF_ATTRIBUTE) != null;
+		boolean hasValAttribute = ele.attribute(VALUE_ATTRIBUTE) != null;
+
+		if (hasRefAttribute) {
+			String refName = ele.attributeValue(REF_ATTRIBUTE);
+			if (!StringUtils.hasText(refName)) {
+				logger.error(elementName + " contains empty 'ref' attribute");
+			}
+			RuntimeBeanReference ref = new RuntimeBeanReference(refName);
+			return ref;
+		} else if (hasValAttribute) {
+			TypedStringValue valueHolder = new TypedStringValue(ele.attributeValue(VALUE_ATTRIBUTE));
+			return valueHolder;
+		} else {
+			throw new RuntimeException(elementName + " must specify a ref or name");
+		}
+
 	}
 
 }

@@ -1,11 +1,9 @@
 package com.kkdz.code.utils;
 
-public class Assert {
-
+public abstract class Assert {
 	public static void notNull(Object object, String message) {
 		if (object == null) {
 			throw new IllegalArgumentException(message);
 		}
 	}
-
 }

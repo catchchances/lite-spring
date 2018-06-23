@@ -1,6 +1,10 @@
 package com.kkdz.code.beans.factory.support;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.kkdz.code.beans.BeanDefinition;
+import com.kkdz.code.beans.PropertyValue;
 
 public class GenericBeanDefinition implements BeanDefinition {
 
@@ -13,6 +17,8 @@ public class GenericBeanDefinition implements BeanDefinition {
 	private boolean prototype = false;
 
 	private String scope = SCOPE_DEFAULT;
+
+	List<PropertyValue> propertyValues = new ArrayList<>();
 
 	public GenericBeanDefinition(String beanId, String beanClassName) {
 		this.beanId = beanId;
@@ -53,6 +59,11 @@ public class GenericBeanDefinition implements BeanDefinition {
 		this.scope = scope;
 		this.singleton = SCOPE_SINGLETON.equals(scope) || SCOPE_DEFAULT.equals(scope);
 		this.prototype = SCOPE_PROTOTYPE.equals(scope);
+	}
+
+	@Override
+	public List<PropertyValue> getPropertyValues() {
+		return this.propertyValues;
 	}
 
 }

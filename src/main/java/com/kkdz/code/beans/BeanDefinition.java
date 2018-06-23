@@ -1,5 +1,8 @@
 package com.kkdz.code.beans;
 
+import java.util.List;
+
+
 /**
  * anDefinition是get bean的定义
  * 
@@ -21,5 +24,7 @@ public interface BeanDefinition {
 	public String getScope();
 
 	public void setScope(String scope);
+
+	public List<PropertyValue> getPropertyValues();
 
 }
