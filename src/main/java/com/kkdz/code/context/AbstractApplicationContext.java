@@ -1,6 +1,5 @@
 package com.kkdz.code.context;
 
-import com.kkdz.code.beans.BeanDefinition;
 import com.kkdz.code.beans.factory.support.DefaultBeanFactory;
 import com.kkdz.code.beans.factory.xml.XmlBeanDefinitionReader;
 import com.kkdz.code.core.Resource;
@@ -19,10 +18,10 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 		factory.setBeanClassLoader(this.getClassLoader());
 	}
 
-	@Override
-	public BeanDefinition getBeanDefinition(String beanId) {
-		return this.factory.getBeanDefinition(beanId);
-	}
+//	@Override
+//	public BeanDefinition getBeanDefinition(String beanId) {
+//		return this.factory.getBeanDefinition(beanId);
+//	}
 
 	@Override
 	public Object getBean(String beanId) {

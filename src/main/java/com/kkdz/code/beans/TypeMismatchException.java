@@ -1,6 +1,8 @@
 package com.kkdz.code.beans;
 
 public class TypeMismatchException extends BeansException{
+	private static final long serialVersionUID = 1L;
+
 	private transient Object value;
 
 	private Class<?> requiredType;
