@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.kkdz.code.beans.BeanDefinition;
 import com.kkdz.code.beans.PropertyValue;
-import com.kkdz.code.beans.RuntimeBeanReference;
+import com.kkdz.code.beans.factory.config.RuntimeBeanReference;
 import com.kkdz.code.beans.factory.support.DefaultBeanFactory;
 import com.kkdz.code.beans.factory.xml.XmlBeanDefinitionReader;
 import com.kkdz.code.core.io.ClassPathResource;

@@ -12,9 +12,9 @@ import org.dom4j.io.SAXReader;
 
 import com.kkdz.code.beans.BeanDefinition;
 import com.kkdz.code.beans.PropertyValue;
-import com.kkdz.code.beans.RuntimeBeanReference;
-import com.kkdz.code.beans.TypedStringValue;
 import com.kkdz.code.beans.factory.BeanDefinitionStoreException;
+import com.kkdz.code.beans.factory.config.RuntimeBeanReference;
+import com.kkdz.code.beans.factory.config.TypedStringValue;
 import com.kkdz.code.beans.factory.support.BeanDefinitionRegister;
 import com.kkdz.code.beans.factory.support.GenericBeanDefinition;
 import com.kkdz.code.core.Resource;
