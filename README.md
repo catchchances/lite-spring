@@ -1,4 +1,3 @@
 # lite-spring
 
-liuxin:
-https://github.com/onlyliuxin/litespring/
+create lite-spring step by step

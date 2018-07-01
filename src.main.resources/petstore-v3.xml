@@ -2,11 +2,9 @@
 <!DOCTYPE xml>
 <beans>
 	<bean id="petStore" class="com.kkdz.code.service.v1.PetStoreService">
-		<property name="accountDao" ref="accountDao" />
-		<property name="itemDao" ref="itemDao" />
-		<property name="env" value="test" /><!-- value type string -->
-		<property name="version" value="2" /><!-- value type int -->
-		
+		<constructor-arg ref="accountDao" />
+		<constructor-arg ref="itemDao" />
+		<constructor-arg value="1" />
 	</bean>
 
 	<bean id="accountDao" class="com.kkdz.code.service.v2.AccountDao">

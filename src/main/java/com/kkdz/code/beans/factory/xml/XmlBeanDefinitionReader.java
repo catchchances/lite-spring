@@ -11,6 +11,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.kkdz.code.beans.BeanDefinition;
+import com.kkdz.code.beans.ConstructorArgument;
 import com.kkdz.code.beans.PropertyValue;
 import com.kkdz.code.beans.factory.BeanDefinitionStoreException;
 import com.kkdz.code.beans.factory.config.RuntimeBeanReference;
@@ -28,9 +29,11 @@ public class XmlBeanDefinitionReader {
 	private static final String CLASS_ID = "id";
 	private static final String SCOPE_ATTRIBUTE = "scope";
 	private static final String PROPERTY_ELEMENT = "property";
+	private static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
 	private static final String REF_ATTRIBUTE = "ref";
 	private static final String VALUE_ATTRIBUTE = "value";
 	private static final String NAME_ATTRIBUTE = "name";
+	private static final String TYPE_ATTRIBUTE = "type";
 
 	BeanDefinitionRegister register;
 
@@ -57,6 +60,7 @@ public class XmlBeanDefinitionReader {
 					bd.setScope(scope);
 				}
 				parsePropertyElement(ele, bd);
+				parseConstructorArgElements(ele, bd);
 				register.registerBeanDefinition(beanId, bd);
 			}
 		} catch (Exception e) {
@@ -70,6 +74,30 @@ public class XmlBeanDefinitionReader {
 				}
 			}
 		}
+	}
+
+	private void parseConstructorArgElements(Element ele, BeanDefinition bd) {
+		@SuppressWarnings("unchecked")
+		Iterator<Element> iter = ele.elementIterator(CONSTRUCTOR_ARG_ELEMENT);
+		while (iter.hasNext()) {
+			Element argElem = iter.next();
+			parseArgumentValue(argElem, bd);
+		}
+
+	}
+
+	private void parseArgumentValue(Element argElem, BeanDefinition bd) {
+		String name = argElem.attributeValue(NAME_ATTRIBUTE);
+		String type = argElem.attributeValue(TYPE_ATTRIBUTE);
+		Object value = parsePropertyValue(argElem, bd, null);// null表示是的构造器
+		ConstructorArgument.ValueHolder valueHolder = new ConstructorArgument.ValueHolder(value);
+		if (StringUtils.hasLength(name)) {
+			valueHolder.setName(name);
+		}
+		if (StringUtils.hasLength(type)) {
+			valueHolder.setType(type);
+		}
+		bd.getConstructorArgument().addArgumentValue(valueHolder);
 	}
 
 	private void parsePropertyElement(Element beanElem, BeanDefinition bd) {

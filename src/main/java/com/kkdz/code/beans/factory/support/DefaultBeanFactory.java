@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import com.kkdz.code.beans.BeanDefinition;
 import com.kkdz.code.beans.PropertyValue;
 import com.kkdz.code.beans.SimpleTypeConverter;
@@ -81,13 +82,18 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegister
 	}
 
 	private Object instantiateBean(BeanDefinition bd) {
-		ClassLoader cl = this.getClassLoader();
-		String beanClassName = bd.getBeanClassName();
-		try {
-			Class<?> clz = cl.loadClass(beanClassName);
-			return clz.newInstance();
-		} catch (Exception e) {
-			throw new BeanCreationException("create bean for '" + beanClassName + "' failed", e);
+		if (bd.hasConstructorArgumentValues()) {
+			ConstructorResolver resolver = new ConstructorResolver(this);
+			return resolver.autowireConstructor(bd);
+		} else {
+			ClassLoader cl = this.getClassLoader();
+			String beanClassName = bd.getBeanClassName();
+			try {
+				Class<?> clz = cl.loadClass(beanClassName);
+				return clz.newInstance();
+			} catch (Exception e) {
+				throw new BeanCreationException("create bean for '" + beanClassName + "' failed", e);
+			}
 		}
 	}
 

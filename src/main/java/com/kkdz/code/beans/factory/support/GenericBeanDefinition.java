@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kkdz.code.beans.BeanDefinition;
+import com.kkdz.code.beans.ConstructorArgument;
 import com.kkdz.code.beans.PropertyValue;
 
 public class GenericBeanDefinition implements BeanDefinition {
 
-	private String beanId;
 
 	private String beanClassName;
+	
+	private String id;
 
 	private boolean singleton = true;
 
@@ -19,9 +21,11 @@ public class GenericBeanDefinition implements BeanDefinition {
 	private String scope = SCOPE_DEFAULT;
 
 	List<PropertyValue> propertyValues = new ArrayList<>();
+	
+	private ConstructorArgument constructorArgument = new ConstructorArgument();
 
-	public GenericBeanDefinition(String beanId, String beanClassName) {
-		this.beanId = beanId;
+	public GenericBeanDefinition(String id, String beanClassName) {
+		this.id = id;
 		this.beanClassName = beanClassName;
 	}
 
@@ -30,9 +34,6 @@ public class GenericBeanDefinition implements BeanDefinition {
 		return this.beanClassName;
 	}
 
-	public String getBeanId() {
-		return this.beanId;
-	}
 
 	public boolean isSingleton() {
 		return singleton;
@@ -65,5 +66,22 @@ public class GenericBeanDefinition implements BeanDefinition {
 	public List<PropertyValue> getPropertyValues() {
 		return this.propertyValues;
 	}
+
+
+	@Override
+	public String getID() {
+		return this.id;
+	}
+
+	@Override
+	public boolean hasConstructorArgumentValues() {
+		return !this.getConstructorArgument().isEmpty();
+	}
+
+	@Override
+	public ConstructorArgument getConstructorArgument() {
+		return this.constructorArgument;
+	}
+
 
 }

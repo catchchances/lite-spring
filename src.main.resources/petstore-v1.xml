@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
 <beans>
 	<bean id="petStore" class="com.kkdz.code.service.v1.PetStoreService"
 		scope='singleton'>
