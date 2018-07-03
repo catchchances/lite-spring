@@ -1,13 +1,14 @@
 package com.kkdz.code.beans.factory.support;
 
+import com.kkdz.code.beans.factory.BeanFactory;
 import com.kkdz.code.beans.factory.config.RuntimeBeanReference;
 import com.kkdz.code.beans.factory.config.TypedStringValue;
 
 public class BeanDefinitionValueResolver {
 
-	private DefaultBeanFactory factory;
+	private BeanFactory factory;
 
-	public BeanDefinitionValueResolver(DefaultBeanFactory factory) {
+	public BeanDefinitionValueResolver(BeanFactory factory) {
 		this.factory = factory;
 	}
 

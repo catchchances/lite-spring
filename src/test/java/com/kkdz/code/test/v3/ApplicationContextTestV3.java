@@ -23,8 +23,7 @@ public class ApplicationContextTestV3 {
 
 		assertTrue(petStore.getAccountDao() instanceof AccountDao);
 		assertTrue(petStore.getItemDao() instanceof ItemDao);
-		assertTrue(petStore.getEnv().equals("test"));
-		assertTrue(petStore.getVersion() == 2);
+		assertTrue(petStore.getVersion() == 1);
 	}
 
 }
